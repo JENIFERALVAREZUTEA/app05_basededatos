@@ -2,6 +2,7 @@ import 'package:app05_basedatos/db/db_admin.dart';
 import 'package:app05_basedatos/models/task_model.dart';
 import 'package:app05_basedatos/widgets/myform_widget.dart';
 import 'package:flutter/material.dart';
+
 class HomePage extends StatefulWidget {
   @override
   State<HomePage> createState() => _HomePageState();
@@ -20,12 +21,32 @@ class _HomePageState extends State<HomePage> {
       builder: (BuildContext context) {
         return MyFormWidget();
       },
-    );
+    ).then((value) {
+      setState(() {});
+    });
   }
 
-
-
-
+  deleteTask(int taskId) {
+    DBAdmin.db.deleteTASK(taskId).then((value) {
+      if (value > 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.indigo,
+            content: Row(
+              children: [
+                Icon(
+                  Icons.check_circle,
+                  color: Colors.white,
+                ),
+                SizedBox(width: 10.0),
+                Text(" eliminida"),
+              ],
+            ),
+          ),
+        );
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,10 +70,31 @@ class _HomePageState extends State<HomePage> {
               return ListView.builder(
                 itemCount: myTasks.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    title: Text(myTasks[index].nombre),
-                    subtitle: Text(myTasks[index].apellidos),
-                    trailing: Text(myTasks[index].id.toString()),
+                  return Dismissible(
+                    key: UniqueKey(),
+                    // confirmDismiss: (DismissDirection direction)async{
+                    //   print(direction);
+                    //  return true;
+                    // },
+                    direction: DismissDirection.startToEnd,
+                    background: Container(
+                      color: Colors.redAccent,
+                    ),
+
+                    // secondaryBackground: Text("hola 2"),
+                    onDismissed: (DismissDirection direction) {
+                      deleteTask(myTasks[index].id!);
+                    },
+                    child: ListTile(
+                      title: Text(myTasks[index].nombre),
+                      subtitle: Text(myTasks[index].apellidos),
+                      trailing: IconButton(
+                        onPressed:(){
+                          showDialogForm();
+                    },
+                  icon: Icon(Icons.edit),
+                    ),
+                    ),
                   );
                 },
               );

@@ -109,10 +109,10 @@ updateRawTask()async{
     print(res);
   }
 
-  deleteTASK()async{
+  Future<int>deleteTASK(int id)async{
     Database? db = await chekDatabase();
-    int res = await db!.delete(" Matricula", where: "id =3");
-    print(res);
+    int res = await db!.delete(" Matricula", where: "id =$id");
+   return res;
   }
 
 }

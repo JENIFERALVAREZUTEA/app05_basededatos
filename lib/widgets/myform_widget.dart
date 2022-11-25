@@ -19,39 +19,41 @@ class _MyFormWidgetState extends State<MyFormWidget> {
   final TextEditingController _codigoController = TextEditingController();
 
   addTask() {
-     TaskModel taskModel = TaskModel(
+    if(_formkey.currentState!.validate()){
+      TaskModel taskModel = TaskModel(
 
-        nombre: _nombreController.text,
-        apellidos: _apellidosController.text,
-        correo: _correoController.text,
-        codigo: _codigoController.text
-    );
-    DBAdmin.db.insertTask(taskModel).then((value){
-      if (value >0){
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            behavior: SnackBarBehavior.floating,
-            backgroundColor: Colors.indigo,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0)
+          nombre: _nombreController.text,
+          apellidos: _apellidosController.text,
+          correo: _correoController.text,
+          codigo: _codigoController.text
+      );
+      DBAdmin.db.insertTask(taskModel).then((value){
+        if (value >0){
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.indigo,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0)
+              ),
+              duration: const Duration(milliseconds: 1400),
+              content:Row(
+                children: [
+                  Icon(Icons.check_circle, color: Colors.white),
+                  SizedBox(
+                    width: 10.0,
+                  ),
+                  Text(
+                      "registrado exitosamente"
+                  ),
+                ],
+              ),
             ),
-            duration: const Duration(milliseconds: 1400),
-            content:Row(
-              children: [
-                Icon(Icons.check_circle, color: Colors.white),
-                SizedBox(
-                  width: 10.0,
-                ),
-                Text(
-                    "registrado exitosamente"
-                ),
-              ],
-            ),
-          ),
-        );
-      }
-    });
+          );
+        }
+      });
+    }
 
 
   }
@@ -73,6 +75,13 @@ class _MyFormWidgetState extends State<MyFormWidget> {
               maxLines: 2,
               decoration: InputDecoration(hintText: "Nombre"),
               validator: (String? value) {
+
+                if(value!.isEmpty){
+                  return "el campo es obligatorio";
+                }
+                if(value.length < 6){
+                  return "debe de ser mas de 4 caracteres";
+                }
                 return null;
               },
             ),
@@ -83,6 +92,14 @@ class _MyFormWidgetState extends State<MyFormWidget> {
               controller: _apellidosController,
               maxLines: 2,
               decoration: InputDecoration(hintText: "Apellidos"),
+              validator: (String? value) {
+
+                if(value!.isEmpty){
+                  return "el campo es obligatorio";
+                }
+
+                return null;
+              },
             ),
             const SizedBox(
               height: 6.0,
@@ -91,6 +108,18 @@ class _MyFormWidgetState extends State<MyFormWidget> {
               controller: _correoController,
               maxLines: 2,
               decoration: InputDecoration(hintText: "correo"),
+              validator: (String? value) {
+
+                if(value!.isEmpty){
+                  return "el campo es obligatorio";
+                }
+
+                if(value.length < 6){
+                  return "debe de ser mas de 4 caracteres";
+                }
+
+                return null;
+              },
             ),
             const SizedBox(
               height: 6.0,
@@ -99,6 +128,14 @@ class _MyFormWidgetState extends State<MyFormWidget> {
               controller: _codigoController,
               maxLines: 2,
               decoration: InputDecoration(hintText: "codigo"),
+              validator: (String? value) {
+
+                if(value!.isEmpty){
+                  return "el campo es obligatorio";
+                }
+
+                return null;
+              },
             ),
             const SizedBox(
               height: 6.0,
@@ -137,7 +174,8 @@ class _MyFormWidgetState extends State<MyFormWidget> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    addTask();
+                   addTask();
+
                   },
                   child: Text(
                     "Aceptar",
